@@ -220,36 +220,36 @@ pub trait DuoReflex<'a,B,C> where Self:Sized{
 impl<'a,B,C,Fun> DuoReflex<'a,B,C> for Fun where Fun: Fn(B,B)->C{}
 
 
-/// -> impl versions
-fn atop<A,B,C,D,Mono,Duo>(m: Mono,d: Duo)-> impl Fn(A,B)->D 
+/// no overhead function composition
+pub fn atop<A,B,C,D,Mono,Duo>(m: Mono,d: Duo)-> impl Fn(A,B)->D 
 where Mono: Fn(C)->D, Duo:Fn(A,B)->C 
 { move |x,y|m(d(x,y)) }
 
-fn appose<A,B,C,Duo,Mono>(d:Duo,m:Mono)-> impl Fn(A,A)->C
+pub fn appose<A,B,C,Duo,Mono>(d:Duo,m:Mono)-> impl Fn(A,A)->C
 where Duo: Fn(B,B)->C, Mono: Fn(A)->B
 { move|x,y|d( m(x), m(y) ) }
 
-fn compose<B,C,D,Mono1,Mono2>(m1: Mono1, m2: Mono2)-> impl Fn(B)->D
+pub fn compose<B,C,D,Mono1,Mono2>(m1: Mono1, m2: Mono2)-> impl Fn(B)->D
 where Mono1: Fn(C)->D, Mono2: Fn(B)->C
 { move|y|m1(m2(y)) }
 
-fn hook<A,B,C,D,Duo,Mono>(d:Duo,m:Mono)-> impl Fn(A,B)->D
+pub fn hook<A,B,C,D,Duo,Mono>(d:Duo,m:Mono)-> impl Fn(A,B)->D
 where Duo: Fn(A,C)->D, Mono: Fn(B)->C
 { move|x,y|d(x,m(y)) }
 
-fn monohook<B,C,D,Duo,Mono>(d: Duo, m: Mono)-> impl Fn(B)->D 
+pub fn monohook<B,C,D,Duo,Mono>(d: Duo, m: Mono)-> impl Fn(B)->D 
 where Duo: Fn(B,C)->D, Mono: Fn(B)->C, B:Clone
 { move|y|d(y.clone(),m(y)) }
 
-fn revhook<A,B,C,D,Duo,Mono>(d:Duo, m:Mono)-> impl Fn(A,B)->D + 
+pub fn revhook<A,B,C,D,Duo,Mono>(d:Duo, m:Mono)-> impl Fn(A,B)->D + 
 where Duo: Fn(B,C)->D, Mono: Fn(A)->C
 { move|x,y|d(y,m(x)) }
 
-fn reflex<B,C,Duo>(d:Duo)-> impl Fn(B)->C
+pub fn reflex<B,C,Duo>(d:Duo)-> impl Fn(B)->C
 where Duo: Fn(B,B)->C, B:Clone
 { move|y| d(y.clone(),y) }
 
-fn flip<A,B,C,Duo>(d: Duo)-> impl Fn(B,A)->C 
+pub fn flip<A,B,C,Duo>(d: Duo)-> impl Fn(B,A)->C 
 where Duo: Fn(A,B)->C
 { move|x,y|d(y,x) }
 
